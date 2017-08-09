@@ -54,14 +54,40 @@ public class HllBenchmark {
   
   @Benchmark
   public NumDistinctValueEstimator benchMergeSparseToDense(BenchmarkState state) throws IOException {
-    // this is what really happens for item_sk columns
     state.nv0.mergeEstimators(state.nv2);
     return state.nv0;
   }
   @Benchmark
   public NumDistinctValueEstimator benchMergeDenseToSparse(BenchmarkState state) throws IOException {
-    // this is what really happens for item_sk columns
     state.nv2.mergeEstimators(state.nv1);
+    return state.nv2;
+  }
+  
+  @Benchmark
+  public NumDistinctValueEstimator benchMergeDenseToEmpty(BenchmarkState state) throws IOException {
+    HyperLogLog hll = HyperLogLog.builder().build();
+    hll.mergeEstimators(state.nv1);
+    return hll;
+  }
+  
+  @Benchmark
+  public NumDistinctValueEstimator benchMergeEmptyToDense(BenchmarkState state) throws IOException {
+    HyperLogLog hll = HyperLogLog.builder().build();
+    state.nv1.mergeEstimators(hll);
+    return state.nv1;
+  }
+  
+  @Benchmark
+  public NumDistinctValueEstimator benchMergeSparseToEmpty(BenchmarkState state) throws IOException {
+    HyperLogLog hll = HyperLogLog.builder().build();
+    hll.mergeEstimators(state.nv2);
+    return hll;
+  }
+  
+  @Benchmark
+  public NumDistinctValueEstimator benchMergeEmptyToSparse(BenchmarkState state) throws IOException {
+    HyperLogLog hll = HyperLogLog.builder().build();
+    state.nv2.mergeEstimators(hll);
     return state.nv2;
   }
 }
